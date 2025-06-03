@@ -15,7 +15,7 @@ from utils.dataset import Dataset
 
 warnings.filterwarnings("ignore")
 
-data_dir = '../Dataset/COCO'
+data_dir = ''
 
 
 def train(args, params):
@@ -263,11 +263,14 @@ def main():
     parser.add_argument('--local-rank', default=0, type=int)
     parser.add_argument('--local_rank', default=0, type=int)
     parser.add_argument('--epochs', default=600, type=int)
+    parser.add_argument('--direc', type=str)
     parser.add_argument('--train', action='store_true')
     parser.add_argument('--test', action='store_true')
 
     args = parser.parse_args()
 
+    data_dir = args.direc
+    
     args.local_rank = int(os.getenv('LOCAL_RANK', 0))
     args.world_size = int(os.getenv('WORLD_SIZE', 1))
     args.distributed = int(os.getenv('WORLD_SIZE', 1)) > 1
