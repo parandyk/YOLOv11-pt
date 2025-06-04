@@ -102,7 +102,7 @@ def train(args, params):
 
     if args.distributed:
         sampler = data.distributed.DistributedSampler(dataset)
-    else if args.tsplit:
+    elif args.tsplit:
         sampler = get_sampler_split(dataset, args.tratio, shuffling)
         shuffling = False
 
@@ -242,7 +242,7 @@ def test(args, params, model=None):
 
     if args.distributed:
         sampler = data.distributed.DistributedSampler(dataset)
-    else if args.vsplit:
+    elif args.vsplit:
         sampler = get_sampler_split(dataset, args.vratio)
     
     loader = data.DataLoader(dataset, batch_size=4, sampler = sampler if args.vsplit, shuffle=False, num_workers=4,
