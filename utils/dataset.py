@@ -16,6 +16,10 @@ class CustomBatches:
         transposed_data = list(zip(*data))
         self.inp = torch.stack(transposed_data[0], 0)
         self.tgt = transposed_data[1]
+        
+    def pin_memory(self):
+        self.inp = self.inp.pin_memory()
+        return (self.inp, self.tgt)
 
 class Dataset(data.Dataset):
     def __init__(self, filenames, input_size, params, augment):
@@ -180,10 +184,6 @@ class Dataset(data.Dataset):
         image4, label4 = random_perspective(image4, label4, params, border)
 
         return image4, label4
-
-    # def pin_memory(self):
-    #         self.inp = self.inp.pin_memory()
-    #         return (self.inp, self.tgt)
     
     @staticmethod
     def collate_fn(batch):
