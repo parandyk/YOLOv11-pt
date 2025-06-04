@@ -47,7 +47,7 @@ def compose_transforms(inference = False): #new
                             
                                     torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                                     #NORMALIZACJA DANYCH TENSORA
-                                    torchvision.transforms.v2.CenterCrop([640, 640])
+                                    #torchvision.transforms.v2.CenterCrop([640, 640])
                                 ]
                                 )
     else:
@@ -59,7 +59,7 @@ def compose_transforms(inference = False): #new
                                     torchvision.transforms.v2.RandomHorizontalFlip(),
                                     torchvision.transforms.v2.RandomVerticalFlip(),
                                     torchvision.transforms.v2.RandomVerticalFlip(),
-                                    torchvision.transforms.v2.CenterCrop([640, 640])
+                                    #torchvision.transforms.v2.CenterCrop([640, 640])
                                 ]
                                 )
     
