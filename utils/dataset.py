@@ -186,13 +186,16 @@ class Dataset(data.Dataset):
         return image4, label4
     
     @staticmethod
+
+        def collate_fn(batch):
+            return torch.utils.data.dataloader.default_collate(batch)
     # def collate_fn(batch):
     #     return tuple(zip(*batch))
-    def collate_fn(batch):
-        if torch.cuda.is_available():
-            return CustomBatches(batch)
-        else:
-            return tuple(zip(*batch))
+    # def collate_fn(batch):
+    #     if torch.cuda.is_available():
+    #         return CustomBatches(batch)
+    #     else:
+    #         return tuple(zip(*batch))
     # def collate_fn(batch):
     #     new_batch = {}
     #     keys = batch[0].keys()
