@@ -107,14 +107,14 @@ def train(args, params):
     if args.distributed:
         sampler = data.distributed.DistributedSampler(dataset)
         loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler,
-                             num_workers=8, pin_memory=True)#, collate_fn=Dataset.collate_fn)
+                             num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
     else:
         if args.tsplit:
             sampler = get_sampler_split(dataset, args.tratio, shuffling)
             shuffling = False
             
         loader = data.DataLoader(dataset, args.batch_size, sampler = sampler, shuffle = shuffling,
-                    num_workers=8, pin_memory=True)#, collate_fn=Dataset.collate_fn)
+                    num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
 
     
     # loader = data.DataLoader(dataset, args.batch_size, sampler is None if args.distributed else sampler = sampler, sampler is None if arg, shuffle = shuffling,
@@ -259,7 +259,7 @@ def test(args, params, model=None):
     #                 num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
     
     loader = data.DataLoader(dataset, batch_size=4, sampler = sampler, shuffle=False, num_workers=4,
-                             pin_memory=True)#, collate_fn=Dataset.collate_fn)
+                             pin_memory=True, collate_fn=Dataset.collate_fn)
 
     plot = False
     if not model:
