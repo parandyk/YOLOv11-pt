@@ -261,7 +261,6 @@ def main():
     parser.add_argument('--input-size', default=640, type=int)
     parser.add_argument('--batch-size', default=32, type=int)
     parser.add_argument('--local-rank', default=0, type=int)
-    parser.add_argument('--local_rank', default=0, type=int)
     parser.add_argument('--epochs', default=600, type=int)
     parser.add_argument('--direc', type=str, help='Path to the input directory.')
     parser.add_argument('--train', action='store_true')
