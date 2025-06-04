@@ -106,7 +106,7 @@ def train(args, params):
         sampler = get_sampler_split(dataset, args.tratio, shuffling)
         shuffling = False
 
-    loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler, shuffle = shuffling
+    loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler, shuffle = shuffling,
                              num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
 
     # Scheduler
