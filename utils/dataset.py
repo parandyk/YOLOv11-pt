@@ -11,6 +11,12 @@ from torch.utils import data
 FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp'
 
 
+class CustomBatches:
+    def __init__(self, data):
+        transposed_data = list(zip(*data))
+        self.inp = torch.stack(transposed_data[0], 0)
+        self.tgt = transposed_data[1]
+
 class Dataset(data.Dataset):
     def __init__(self, filenames, input_size, params, augment):
         self.params = params
@@ -174,12 +180,6 @@ class Dataset(data.Dataset):
         image4, label4 = random_perspective(image4, label4, params, border)
 
         return image4, label4
-
-    class CustomBatches:
-        def __init__(self, data):
-            transposed_data = list(zip(*data))
-            self.inp = torch.stack(transposed_data[0], 0)
-            self.tgt = transposed_data[1]
 
     # def pin_memory(self):
     #         self.inp = self.inp.pin_memory()
