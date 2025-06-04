@@ -263,7 +263,7 @@ def main():
     parser.add_argument('--local-rank', default=0, type=int)
     parser.add_argument('--local_rank', default=0, type=int)
     parser.add_argument('--epochs', default=600, type=int)
-    parser.add_argument('--direc', type=str)
+    parser.add_argument('--direc', type=str, help='Path to the input directory.')
     parser.add_argument('--train', action='store_true')
     parser.add_argument('--test', action='store_true')
 
