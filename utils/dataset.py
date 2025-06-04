@@ -218,7 +218,7 @@ class Dataset(data.Dataset):
     #     return new_batch
     @staticmethod    
     def collate_fn(batch): #original
-        print(batch)
+        #print(batch)
         # samples, cls, box, indices = zip(*batch)
         images, targets = zip(*batch)
 
