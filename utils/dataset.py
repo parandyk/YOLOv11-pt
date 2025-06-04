@@ -219,8 +219,13 @@ class Dataset(data.Dataset):
     @staticmethod    
     def collate_fn(batch): #original
         print(batch)
-        samples, cls, box, indices = zip(*batch)
+        # samples, cls, box, indices = zip(*batch)
+        images, targets = zip(*batch)
 
+        cls = targets["labels"]
+        box = targets["boxes"]
+        indices = targets["image_id"]
+        
         cls = torch.cat(cls, dim=0)
         box = torch.cat(box, dim=0)
 
@@ -232,7 +237,7 @@ class Dataset(data.Dataset):
         targets = {'cls': cls,
                    'box': box,
                    'idx': indices}
-        return torch.stack(samples, dim=0), targets
+        return torch.stack(images, dim=0), targets
 
     @staticmethod
     def load_label(filenames):
