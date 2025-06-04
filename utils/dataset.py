@@ -222,7 +222,7 @@ class Dataset(data.Dataset):
         images, targets = zip(*batch)
         # nl = len(label)
         # torch.zeros(nl)
-        targets = pd.DataFrame(targets).to_dict(orient="list)
+        targets = pd.DataFrame(targets).to_dict(orient="list")
         print(targets)
         # print(type(targets))
         # print(images[0][320][320])
