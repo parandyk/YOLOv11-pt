@@ -177,20 +177,38 @@ class Dataset(data.Dataset):
 
     @staticmethod
     def collate_fn(batch):
-        samples, cls, box, indices = zip(*batch)
+        new_batch = {}
+        keys = batch[0].keys()
+        values = list(zip(*[list(b.values()) for b in batch]))
+        for i, k in enumerate(keys):
+            value = values[i]
+            if k == "img":
+                value = torch.stack(value, 0)
+            if k in {"cls", 'box'}:
+                value = torch.cat(value, 0)
+            new_batch[k] = value
+        new_batch["idx"] = list(new_batch["idx"])
+        for i in range(len(new_batch["idx"])):
+            new_batch["idx"][i] += i
+        new_batch["idx"] = torch.cat(new_batch["idx"], 0)
+        
+        return new_batch
+        
+    # def collate_fn(batch): #original
+    #     samples, cls, box, indices = zip(*batch)
 
-        cls = torch.cat(cls, dim=0)
-        box = torch.cat(box, dim=0)
+    #     cls = torch.cat(cls, dim=0)
+    #     box = torch.cat(box, dim=0)
 
-        new_indices = list(indices)
-        for i in range(len(indices)):
-            new_indices[i] += i
-        indices = torch.cat(new_indices, dim=0)
+    #     new_indices = list(indices)
+    #     for i in range(len(indices)):
+    #         new_indices[i] += i
+    #     indices = torch.cat(new_indices, dim=0)
 
-        targets = {'cls': cls,
-                   'box': box,
-                   'idx': indices}
-        return torch.stack(samples, dim=0), targets
+    #     targets = {'cls': cls,
+    #                'box': box,
+    #                'idx': indices}
+    #     return torch.stack(samples, dim=0), targets
 
     @staticmethod
     def load_label(filenames):
