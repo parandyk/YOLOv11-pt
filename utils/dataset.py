@@ -199,6 +199,7 @@ class Dataset(data.Dataset):
             return torch.load(path)
         x = {}
         counter = 0 #to be removed
+        part = 1 #to be removed
         for filename in filenames:
             counter += 1 #to be removed
             try:
@@ -208,6 +209,8 @@ class Dataset(data.Dataset):
                     if counter == 500: #to be removed
                         print(f) #to be removed
                         counter = 0 #to be removed
+                        part += 1 #to be removed
+                        print(part) #to be removed
                     #remove
                     image = Image.open(f)
                     image.verify()  # PIL verify
