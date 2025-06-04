@@ -221,9 +221,9 @@ class Dataset(data.Dataset):
     def collate_fn(batch): #original
         images, targets = zip(*batch)
         targets = pd.DataFrame(targets).to_dict(orient="list")
-        print(targets)
-        print(type(targets))
-        print(images[0][320][320])
+        # print(targets)
+        # print(type(targets))
+        # print(images[0][320][320])
         images = torch.stack(images, dim=0)
         return images, targets
     # def collate_fn(batch): #original
