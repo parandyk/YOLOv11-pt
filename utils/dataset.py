@@ -4,6 +4,7 @@ import random
 
 import cv2
 import numpy
+import pandas as pd
 import torch
 from PIL import Image
 from torch.utils import data
@@ -218,27 +219,35 @@ class Dataset(data.Dataset):
     #     return new_batch
     @staticmethod    
     def collate_fn(batch): #original
-        #print(batch)
-        # samples, cls, box, indices = zip(*batch)
         images, targets = zip(*batch)
-        print(f"targets is type {type(targets)}")
-        print(f"targets[0] is type {type(targets[0])}")
-        cls = targets["labels"]
-        box = targets["boxes"]
-        indices = targets["image_id"]
+        targets = pd.DataFrame(targets).to_dict(orient="list")
+        print(targets)
+        print(type(targets))
+        images = torch.stack(images, dim=0)
+        return images, targets
+    # def collate_fn(batch): #original
+    #     #print(batch)
+    #     # samples, cls, box, indices = zip(*batch)
+    #     images, targets = zip(*batch)
+    #     targets = pd.DataFrame(targets).to_dict(orient="list")
+    #     print(targets)
+    #     print(type(targets))
+    #     cls = targets["labels"]
+    #     box = targets["boxes"]
+    #     indices = targets["image_id"]
         
-        cls = torch.cat(cls, dim=0)
-        box = torch.cat(box, dim=0)
+    #     cls = torch.cat(cls, dim=0)
+    #     box = torch.cat(box, dim=0)
 
-        new_indices = list(indices)
-        for i in range(len(indices)):
-            new_indices[i] += i
-        indices = torch.cat(new_indices, dim=0)
+    #     new_indices = list(indices)
+    #     for i in range(len(indices)):
+    #         new_indices[i] += i
+    #     indices = torch.cat(new_indices, dim=0)
 
-        targets = {'cls': cls,
-                   'box': box,
-                   'idx': indices}
-        return torch.stack(images, dim=0), targets
+    #     targets = {'cls': cls,
+    #                'box': box,
+    #                'idx': indices}
+    #     return torch.stack(images, dim=0), targets
 
     @staticmethod
     def load_label(filenames):
