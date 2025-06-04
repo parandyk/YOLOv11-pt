@@ -221,11 +221,7 @@ class Dataset(data.Dataset):
     def collate_fn(batch): #original
         images, targets = zip(*batch)
         targets = pd.DataFrame(targets).to_dict(orient="list")
-        print(targets)
-        print(type(targets))
-        targets["idx"] = list(map(lambda t: torch.arange(t.size(0)), targets["labels"]))
-        print(f'idx: {type(targets["idx"])}')
-        print(f'labels: {type(targets["labels"])}')
+        targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
         images = torch.stack(images, dim=0)
         return images, targets
     # def collate_fn(batch): #original
