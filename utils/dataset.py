@@ -221,15 +221,8 @@ class Dataset(data.Dataset):
         #print(batch)
         # samples, cls, box, indices = zip(*batch)
         images, targets = zip(*batch)
-        print(targets)
-        try:
-            print(targets.shape)
-        except:
-            print("An exception occurred - shape")
-        try:
-            print(targets.keys)
-        except:
-            print("An exception occurred - keys")
+        type(targets)
+        type(targets[0])
         cls = targets["labels"]
         box = targets["boxes"]
         indices = targets["image_id"]
