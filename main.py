@@ -6,6 +6,8 @@ from argparse import ArgumentParser
 
 import torch
 import torchvision
+from torchvision.transforms import v2 
+#import torchvision.transforms.v2 as v2
 import tqdm
 import yaml
 from torch.utils import data
