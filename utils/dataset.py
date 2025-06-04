@@ -222,7 +222,7 @@ class Dataset(data.Dataset):
         images, targets = zip(*batch)
         targets = pd.DataFrame(targets).to_dict(orient="list")
         targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
-        print(targets["labels"])
+        #print(targets["labels"])
         targets["boxes"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["boxes"]))
         targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
         print(targets["labels"])
