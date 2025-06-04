@@ -198,12 +198,16 @@ class Dataset(data.Dataset):
         if os.path.exists(path):
             return torch.load(path)
         x = {}
+        counter = 0 #to be removed
         for filename in filenames:
+            counter += 1 #to be removed
             try:
                 # verify images
                 with open(filename, 'rb') as f:
                     #remove
-                    print(f)
+                    if counter == 500: #to be removed
+                        print(f) #to be removed
+                        counter = 0 #to be removed
                     #remove
                     image = Image.open(f)
                     image.verify()  # PIL verify
