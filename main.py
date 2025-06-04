@@ -70,7 +70,7 @@ def get_dataset(img_path, anno_path, inference = False, wrap = False): #new
     dataset = torchvision.datasets.CocoDetection(img_path, anno_path, transforms)
     if wrap:
         dataset = torchvision.datasets.wrap_dataset_for_transforms_v2(dataset)
-        #dataset = torchvision.datasets.wrap_dataset_for_transforms_v2(dataset, target_keys=("boxes", "labels"))
+        #dataset = torchvision.datasets.wrap_dataset_for_transforms_v2(dataset, target_keys=("boxes", "labels", "image_id", "bbox", "category_id", "image_id"))
         
     return dataset
 
