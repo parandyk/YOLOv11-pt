@@ -187,10 +187,12 @@ class Dataset(data.Dataset):
     
     @staticmethod
     def collate_fn(batch):
-        if torch.cuda.is_available():
-            return CustomBatches(batch)
-        else:
-            return tuple(zip(*batch))
+        return tuple(zip(*batch))
+    # def collate_fn(batch):
+    #     if torch.cuda.is_available():
+    #         return CustomBatches(batch)
+    #     else:
+    #         return tuple(zip(*batch))
     # def collate_fn(batch):
     #     new_batch = {}
     #     keys = batch[0].keys()
