@@ -187,8 +187,11 @@ class Dataset(data.Dataset):
     
     @staticmethod
 
-        def collate_fn(batch):
-            return torch.utils.data.dataloader.default_collate(batch)
+    def collate_fn(batch):
+        return torch.utils.data.dataloader.default_collate(batch)
+    # def collate_fn(batch):
+    #    batch = list(filter(lambda x: x is not None, batch))
+    #    return torch.utils.data.dataloader.default_collate(batch)
     # def collate_fn(batch):
     #     return tuple(zip(*batch))
     # def collate_fn(batch):
