@@ -175,24 +175,39 @@ class Dataset(data.Dataset):
 
         return image4, label4
 
+    class CustomBatches:
+        def __init__(self, data):
+            transposed_data = list(zip(*data))
+            self.inp = torch.stack(transposed_data[0], 0)
+            self.tgt = transposed_data[1]
+
+    # def pin_memory(self):
+    #         self.inp = self.inp.pin_memory()
+    #         return (self.inp, self.tgt)
+    
     @staticmethod
     def collate_fn(batch):
-        new_batch = {}
-        keys = batch[0].keys()
-        values = list(zip(*[list(b.values()) for b in batch]))
-        for i, k in enumerate(keys):
-            value = values[i]
-            if k == "img":
-                value = torch.stack(value, 0)
-            if k in {"cls", 'box'}:
-                value = torch.cat(value, 0)
-            new_batch[k] = value
-        new_batch["idx"] = list(new_batch["idx"])
-        for i in range(len(new_batch["idx"])):
-            new_batch["idx"][i] += i
-        new_batch["idx"] = torch.cat(new_batch["idx"], 0)
+    if torch.cuda.is_available():
+        return CustomBatches(batch)
+    else:
+        return tuple(zip(*batch))
+    # def collate_fn(batch):
+    #     new_batch = {}
+    #     keys = batch[0].keys()
+    #     values = list(zip(*[list(b.values()) for b in batch]))
+    #     for i, k in enumerate(keys):
+    #         value = values[i]
+    #         if k == "img":
+    #             value = torch.stack(value, 0)
+    #         if k in {"cls", 'box'}:
+    #             value = torch.cat(value, 0)
+    #         new_batch[k] = value
+    #     new_batch["idx"] = list(new_batch["idx"])
+    #     for i in range(len(new_batch["idx"])):
+    #         new_batch["idx"][i] += i
+    #     new_batch["idx"] = torch.cat(new_batch["idx"], 0)
         
-        return new_batch
+    #     return new_batch
         
     # def collate_fn(batch): #original
     #     samples, cls, box, indices = zip(*batch)
