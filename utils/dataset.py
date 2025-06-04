@@ -221,8 +221,8 @@ class Dataset(data.Dataset):
         #print(batch)
         # samples, cls, box, indices = zip(*batch)
         images, targets = zip(*batch)
-        print(type(targets))
-        print(type(targets[0]))
+        print(f"targets is type {type(targets)}")
+        print(f"targets[0] is type {type(targets[0])}")
         cls = targets["labels"]
         box = targets["boxes"]
         indices = targets["image_id"]
