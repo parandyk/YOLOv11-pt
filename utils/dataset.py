@@ -224,8 +224,8 @@ class Dataset(data.Dataset):
         targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
         idx = torch.cat(targets["idx"], dim = 0)
         print(targets["labels"])
-        labels = torch.cat(targets["labels"], dim = 0)
         boxes = torch.cat(targets["boxes"], dim = 0)
+        labels = torch.cat(targets["labels"], dim = 0)
         targets = {'labels': labels,
                    'boxes': boxes,
                    'idx': idx}
