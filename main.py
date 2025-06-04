@@ -21,12 +21,12 @@ warnings.filterwarnings("ignore")
 data_dir = ''
 
 def get_sampler_split(dataset, ratio, seed = 42, shuffle = False): #new
+    import numpy as np
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
     split = int(np.floor(ratio * dataset_size))
     
     if shuffle:
-        import numpy as np
         np.random.seed(seed)
         np.random.shuffle(indices)
         
