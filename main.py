@@ -102,7 +102,7 @@ def train(args, params):
 
     if args.distributed:
         sampler = data.distributed.DistributedSampler(dataset)
-    else if args.tratio != 1:
+    else if args.tsplit:
         sampler = get_sampler_split(dataset, args.tratio, shuffling)
         shuffling = False
 
@@ -242,7 +242,7 @@ def test(args, params, model=None):
 
     if args.distributed:
         sampler = data.distributed.DistributedSampler(dataset)
-    else if args.vratio != 1:
+    else if args.vsplit:
         sampler = get_sampler_split(dataset, args.vratio)
 
     loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler,
@@ -335,8 +335,10 @@ def main():
     parser.add_argument('--input-size', default=640, type=int)
     parser.add_argument('--batch-size', default=32, type=int)
     parser.add_argument('--local-rank', default=0, type=int)
-    parser.add_argument('--train-ratio', default=1, type=float)
-    parser.add_argument('--val-ratio', default=1, type=float)
+    parser.add_argument('--tsplit', action='store_true')
+    parser.add_argument('--vsplit', action='store_true')
+    parser.add_argument('--tratio', default=0.05, type=float)
+    parser.add_argument('--vratio', default=0.05, type=float)
     parser.add_argument('--epochs', default=5, type=int)
     parser.add_argument('--direc', type=str, help='Path to the input directory.')
     parser.add_argument('--shuffle', action='store_true')
