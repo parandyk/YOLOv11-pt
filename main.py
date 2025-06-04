@@ -100,14 +100,22 @@ def train(args, params):
     dataset = get_dataset(img_path, anno_path, inference = False, wrap = True) #new
     shuffling = args.shuffle
 
+    sampler = None
     if args.distributed:
         sampler = data.distributed.DistributedSampler(dataset)
-    elif args.tsplit:
-        sampler = get_sampler_split(dataset, args.tratio, shuffling)
-        shuffling = False
-
-    loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler, shuffle = shuffling,
+        loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler,
                              num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
+    else:
+        if args.tsplit:
+            sampler = get_sampler_split(dataset, args.tratio, shuffling)
+            shuffling = False
+            
+        loader = data.DataLoader(dataset, args.batch_size, sampler = sampler, shuffle = shuffling,
+                    num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
+
+    
+    # loader = data.DataLoader(dataset, args.batch_size, sampler is None if args.distributed else sampler = sampler, sampler is None if arg, shuffle = shuffling,
+    #                          num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
 
     # Scheduler
     num_steps = len(loader)
@@ -239,13 +247,15 @@ def test(args, params, model=None):
     img_path = data_dir + "/images" + "/val2017" #new
     anno_path = data_dir + "/annotations" + "/instances_val2017.json" #new
     dataset = get_dataset(img_path, anno_path, inference = True, wrap = True) #new
-
-    if args.distributed:
-        sampler = data.distributed.DistributedSampler(dataset)
-    elif args.vsplit:
-        sampler = get_sampler_split(dataset, args.vratio)
     
-    loader = data.DataLoader(dataset, batch_size=4, sampler = sampler if args.vsplit, shuffle=False, num_workers=4,
+    sampler = None
+    if args.vsplit:
+        sampler = get_sampler_split(dataset, args.vratio)
+            
+    # loader = data.DataLoader(dataset, args.batch_size, sampler = sampler, shuffle = shuffling,
+    #                 num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
+    
+    loader = data.DataLoader(dataset, batch_size=4, sampler = sampler, shuffle=False, num_workers=4,
                              pin_memory=True, collate_fn=Dataset.collate_fn)
 
     plot = False
