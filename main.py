@@ -5,6 +5,7 @@ import warnings
 from argparse import ArgumentParser
 
 import torch
+import torchvision
 import tqdm
 import yaml
 from torch.utils import data
@@ -17,6 +18,58 @@ warnings.filterwarnings("ignore")
 
 data_dir = ''
 
+def get_sampler_split(dataset, ratio, seed = 42, shuffle = False): #new
+    dataset_size = len(dataset)
+    indices = list(range(dataset_size))
+    split = int(np.floor(ratio * dataset_size))
+    
+    if shuffle:
+        import numpy as np
+        np.random.seed(seed)
+        np.random.shuffle(indices)
+        
+    _, split_indices = indices[split:], indices[:split]
+    sampler = torch.utils.data.SubsetRandomSampler(indices)
+    
+    return sampler
+    
+def compose_transforms(inference = False): #new
+    if inference:
+        composed_transforms = torchvision.transforms.v2.Compose(
+                                [
+                                    torchvision.transforms.v2.ToImage(),
+                                    #PRZEKSZTAŁCENIE NA TENSOR TYPU OBRAZOWEGO (TZW. IMAGE TENSOR)
+                            
+                                    torchvision.transforms.v2.ConvertImageDtype(torch.float32),
+                                    #ZMIANA TYPU DANYCH ELEMENTÓW TENSORA
+                            
+                                    torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+                                    #NORMALIZACJA DANYCH TENSORA
+                                    torchvision.transforms.v2.CenterCrop([640, 640])
+                                ]
+                                )
+    else:
+        composed_transforms = torchvision.transforms.v2.Compose(
+                                [
+                                    torchvision.transforms.v2.ToImage(), #PRZEKSZTAŁCENIE NA TENSOR TYPU OBRAZOWEGO (TZW. IMAGE TENSOR)
+                                    torchvision.transforms.v2.ConvertImageDtype(torch.float32), #ZMIANA TYPU DANYCH ELEMENTÓW TENSORA
+                                    torchvision.transforms.v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+                                    torchvision.transforms.v2.RandomHorizontalFlip(),
+                                    torchvision.transforms.v2.RandomVerticalFlip(),
+                                    torchvision.transforms.v2.RandomVerticalFlip(),
+                                    torchvision.transforms.v2.CenterCrop([640, 640])
+                                ]
+                                )
+    
+    return composed_transforms
+    
+def get_dataset(img_path, anno_path, inference = False, wrap = False): #new
+    transforms = compose_transforms(inference)
+    dataset = torchvision.datasets.CocoDetection(img_path, anno_path, transforms)
+    if wrap:
+        dataset = torchvision.datasets.wrap_dataset_for_transforms_v2(dataset)
+        
+    return dataset
 
 def train(args, params):
     # Model
@@ -33,19 +86,27 @@ def train(args, params):
     # EMA
     ema = util.EMA(model) if args.local_rank == 0 else None
 
-    filenames = []
-    with open(f'{data_dir}/train2017.txt') as f:
-        for filename in f.readlines():
-            filename = os.path.basename(filename.rstrip())
-            filenames.append(f'{data_dir}/images/train2017/' + filename)
+    # filenames = []
+    # with open(f'{data_dir}/train2017.txt') as f:
+    #     for filename in f.readlines():
+    #         filename = os.path.basename(filename.rstrip())
+    #         filenames.append(f'{data_dir}/images/train2017/' + filename)
 
-    sampler = None
-    dataset = Dataset(filenames, args.input_size, params, augment=True)
+    # sampler = None
+    # dataset = Dataset(filenames, args.input_size, params, augment=True)
+
+    img_path = data_dir + "/images" + "/train2017" #new
+    anno_path = data_dir + "/annotations" + "/instances_train2017.json" #new
+    dataset = get_dataset(img_path, anno_path, inference = False, wrap = True) #new
+    shuffling = args.shuffle
 
     if args.distributed:
         sampler = data.distributed.DistributedSampler(dataset)
+    else if args.tratio != 1:
+        sampler = get_sampler_split(dataset, args.tratio, shuffling)
+        shuffling = False
 
-    loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler,
+    loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler, shuffle = shuffling
                              num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
 
     # Scheduler
@@ -167,13 +228,26 @@ def train(args, params):
 
 @torch.no_grad()
 def test(args, params, model=None):
-    filenames = []
-    with open(f'{data_dir}/val2017.txt') as f:
-        for filename in f.readlines():
-            filename = os.path.basename(filename.rstrip())
-            filenames.append(f'{data_dir}/images/val2017/' + filename)
+    # filenames = []
+    # with open(f'{data_dir}/val2017.txt') as f:
+    #     for filename in f.readlines():
+    #         filename = os.path.basename(filename.rstrip())
+    #         filenames.append(f'{data_dir}/images/val2017/' + filename)
 
-    dataset = Dataset(filenames, args.input_size, params, augment=False)
+    # dataset = Dataset(filenames, args.input_size, params, augment=False)
+
+    img_path = data_dir + "/images" + "/val2017" #new
+    anno_path = data_dir + "/annotations" + "/instances_val2017.json" #new
+    dataset = get_dataset(img_path, anno_path, inference = True, wrap = True) #new
+
+    if args.distributed:
+        sampler = data.distributed.DistributedSampler(dataset)
+    else if args.vratio != 1:
+        sampler = get_sampler_split(dataset, args.vratio)
+
+    loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler,
+                             num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
+    
     loader = data.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=4,
                              pin_memory=True, collate_fn=Dataset.collate_fn)
 
@@ -261,8 +335,11 @@ def main():
     parser.add_argument('--input-size', default=640, type=int)
     parser.add_argument('--batch-size', default=32, type=int)
     parser.add_argument('--local-rank', default=0, type=int)
-    parser.add_argument('--epochs', default=600, type=int)
+    parser.add_argument('--train-ratio', default=1, type=float)
+    parser.add_argument('--val-ratio', default=1, type=float)
+    parser.add_argument('--epochs', default=5, type=int)
     parser.add_argument('--direc', type=str, help='Path to the input directory.')
+    parser.add_argument('--shuffle', action='store_true')
     parser.add_argument('--train', action='store_true')
     parser.add_argument('--test', action='store_true')
 
