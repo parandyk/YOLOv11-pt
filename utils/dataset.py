@@ -202,6 +202,9 @@ class Dataset(data.Dataset):
             try:
                 # verify images
                 with open(filename, 'rb') as f:
+                    #remove
+                    print(f)
+                    #remove
                     image = Image.open(f)
                     image.verify()  # PIL verify
                 shape = image.size  # image size
