@@ -185,10 +185,10 @@ class Dataset(data.Dataset):
 
         return image4, label4
     
-    @staticmethod
+    #@staticmethod #?
 
-    def collate_fn(batch):
-        return torch.utils.data.dataloader.default_collate(batch)
+    # def collate_fn(batch):
+    #     return torch.utils.data.dataloader.default_collate(batch)
     # def collate_fn(batch):
     #    batch = list(filter(lambda x: x is not None, batch))
     #    return torch.utils.data.dataloader.default_collate(batch)
@@ -216,22 +216,22 @@ class Dataset(data.Dataset):
     #     new_batch["idx"] = torch.cat(new_batch["idx"], 0)
         
     #     return new_batch
-        
-    # def collate_fn(batch): #original
-    #     samples, cls, box, indices = zip(*batch)
+    @staticmethod    
+    def collate_fn(batch): #original
+        samples, cls, box, indices = zip(*batch)
 
-    #     cls = torch.cat(cls, dim=0)
-    #     box = torch.cat(box, dim=0)
+        cls = torch.cat(cls, dim=0)
+        box = torch.cat(box, dim=0)
 
-    #     new_indices = list(indices)
-    #     for i in range(len(indices)):
-    #         new_indices[i] += i
-    #     indices = torch.cat(new_indices, dim=0)
+        new_indices = list(indices)
+        for i in range(len(indices)):
+            new_indices[i] += i
+        indices = torch.cat(new_indices, dim=0)
 
-    #     targets = {'cls': cls,
-    #                'box': box,
-    #                'idx': indices}
-    #     return torch.stack(samples, dim=0), targets
+        targets = {'cls': cls,
+                   'box': box,
+                   'idx': indices}
+        return torch.stack(samples, dim=0), targets
 
     @staticmethod
     def load_label(filenames):
