@@ -224,8 +224,8 @@ class Dataset(data.Dataset):
         print(targets)
         print(type(targets))
         targets["idx"] = list(map(lambda t: torch.arange(t.size(0)), targets["labels"]))
-        print(f"idx: {type(targets["idx"])}")
-        print(f"labels: {type(targets["labels"])}")
+        print(f'idx: {type(targets["idx"])}')
+        print(f'labels: {type(targets["labels"])}')
         images = torch.stack(images, dim=0)
         return images, targets
     # def collate_fn(batch): #original
