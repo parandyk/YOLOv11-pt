@@ -223,6 +223,7 @@ class Dataset(data.Dataset):
         targets = pd.DataFrame(targets).to_dict(orient="list")
         print(targets)
         print(type(targets))
+        print(images[0][320][320])
         images = torch.stack(images, dim=0)
         return images, targets
     # def collate_fn(batch): #original
