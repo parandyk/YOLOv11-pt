@@ -269,6 +269,7 @@ def main():
 
     args = parser.parse_args()
 
+    global data_dir
     data_dir = args.direc
     
     args.local_rank = int(os.getenv('LOCAL_RANK', 0))
