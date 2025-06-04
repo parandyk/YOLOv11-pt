@@ -244,11 +244,8 @@ def test(args, params, model=None):
         sampler = data.distributed.DistributedSampler(dataset)
     else if args.vsplit:
         sampler = get_sampler_split(dataset, args.vratio)
-
-    loader = data.DataLoader(dataset, args.batch_size, sampler is None, sampler,
-                             num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
     
-    loader = data.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=4,
+    loader = data.DataLoader(dataset, batch_size=4, sampler = sampler if args.vsplit, shuffle=False, num_workers=4,
                              pin_memory=True, collate_fn=Dataset.collate_fn)
 
     plot = False
