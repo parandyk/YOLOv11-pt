@@ -221,24 +221,26 @@ class Dataset(data.Dataset):
     def collate_fn(batch): #original
         images, targets = zip(*batch)
         targets = pd.DataFrame(targets).to_dict(orient="list")
+        print(f"label is type: {type(targets["labels"][0]}")
+        print(f"boxes is type: {type(targets["boxes"][0]}")
+        print(f"boxes is type: {type(targets["labels"][0]}")
         # targets["label"] = list(map(lambda t: torch.tensor([]) if 
         targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
         #targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
-        print(targets["labels"])
         targets["boxes"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["boxes"]))
-        targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"])) #if isinstance(t, float) and math.isnan(t)
+        targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["label"])) #if isinstance(t, float) and math.isnan(t)
         print(targets["labels"])
-        labels = torch.cat(targets["labels"], dim = 0)
+        labels = torch.cat(targets["label"], dim = 0)
         idx = torch.cat(targets["idx"], dim = 0)
         boxes = torch.cat(targets["boxes"], dim = 0)
-        targets = {'labels': labels,
+        target = {'labels': labels,
                    'boxes': boxes,
                    'idx': idx}
         
         #targets = dict(map(lambda kv: (kv[0], torch.stack(kv[1])), targets.items()))
        # targets = dict(map(lambda kv: (kv[0], torch.cat(kv[1], dim=0)), targets.items()))
         images = torch.stack(images, dim=0)
-        return images, targets
+        return images, target
     # def collate_fn(batch): #original
     #     #print(batch)
     #     # samples, cls, box, indices = zip(*batch)
