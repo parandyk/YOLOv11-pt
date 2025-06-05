@@ -233,9 +233,12 @@ class Dataset(data.Dataset):
         labels = torch.cat(targets["label"], dim = 0)
         idx = torch.cat(targets["idx"], dim = 0)
         boxes = torch.cat(targets["boxes"], dim = 0)
-        target = {'labels': labels,
-                   'boxes': boxes,
-                   'idx': idx}
+        # target = {'labels': labels,
+        #            'boxes': boxes,
+        #            'idx': idx}
+        target = {'cls': labels,
+                  'box': boxes,
+                  'idx': idx}
         
         #targets = dict(map(lambda kv: (kv[0], torch.stack(kv[1])), targets.items()))
        # targets = dict(map(lambda kv: (kv[0], torch.cat(kv[1], dim=0)), targets.items()))
