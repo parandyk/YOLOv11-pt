@@ -21,6 +21,7 @@ warnings.filterwarnings("ignore")
 data_dir = ''
 
 def collate_fn_test(batch): #original
+    print(batch)
     images, targets = zip(*batch)
     targets = pd.DataFrame(targets).to_dict(orient="list")
     
