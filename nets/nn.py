@@ -304,6 +304,33 @@ class YOLO(torch.nn.Module):
                 delattr(m, 'norm')
         return self
 
+def yolo_v11_xp(num_classes: int = 80):
+    csp = [False, True]
+    depth = [1, 1, 1, 1, 1, 1]
+    width = [3, 8, 16, 48, 64, 96]
+    return YOLO(width, depth, csp, num_classes)
+    
+
+def yolo_v11_p(num_classes: int = 80):
+    csp = [False, True]
+    depth = [1, 1, 1, 1, 1, 1]
+    width = [3, 8, 16, 32, 64, 128]
+    return YOLO(width, depth, csp, num_classes)
+
+
+def yolo_v11_xu(num_classes: int = 80):
+    csp = [False, True]
+    depth = [1, 1, 1, 1, 1, 1]
+    width = [3, 16, 32, 48, 64, 128]
+    return YOLO(width, depth, csp, num_classes)
+    
+
+def yolo_v11_u(num_classes: int = 80):
+    csp = [False, True]
+    depth = [1, 1, 1, 1, 1, 1]
+    width = [3, 16, 24, 48, 96, 192]
+    return YOLO(width, depth, csp, num_classes)
+
 
 def yolo_v11_n(num_classes: int = 80):
     csp = [False, True]
