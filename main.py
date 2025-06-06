@@ -312,15 +312,19 @@ def test(args, params, model=None):
         #samples, targets = collate_fn_test(batch)
 
         samples, targets = batch
-        print(f"to targets: {targets}") #delete
-        print(f"to targets shape: {targets.shape}") #delete
+        print(f"samples before cuda: {samples}") #delete
+        targets = fix_targets(targets) 
         samples = samples.cuda()
+        print(f"samples after cuda: {samples}") #delete
         samples = samples.half()  # uint8 to fp16/32
+        print(f"samples after half: {samples}") #delete
         samples = samples / 255.  # 0 - 255 to 0.0 - 1.0
+        print(f"samples after /255: {samples}") #delete
         _, _, h, w = samples.shape  # batch-size, channels, height, width
         scale = torch.tensor((w, h, w, h)).cuda()
         # Inference
         outputs = model(samples)
+        print(f"all outputs here: {outputs}") #delete
         # NMS
         outputs = util.non_max_suppression(outputs)
         # Metrics
