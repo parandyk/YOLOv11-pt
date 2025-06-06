@@ -232,17 +232,15 @@ class Dataset(data.Dataset):
         
         target = {}
         
-        for key in ("labels", "boxes", "idx"):
+        for key in ("labels", "boxes"):
             if key not in targets:
                 target[key] = torch.tensor([])
             else:
-                if key == "idx":
-                    target["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
-                else:
-                    target[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
+                target[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
                     
                 target[key] = torch.cat(target[key], dim=0)
                 
+        target["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), target["labels"]))        
         target["cls"] = target.pop("labels")
         target["box"] = target.pop("boxes")
 
