@@ -257,9 +257,9 @@ class Dataset(data.Dataset):
             target["idx"] = torch.arange(target["labels"].size(0))
             target["cls"] = target.pop("labels")
             target["box"] = target.pop("boxes")
-        
+        print(f"train images before stacking: {images}")
         images = torch.stack(images, dim=0)
-        
+        print(f"train images after stacking: {images}")
         return images, target
         
     # def collate_fn(batch): #original
