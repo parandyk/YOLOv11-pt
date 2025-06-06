@@ -20,6 +20,28 @@ warnings.filterwarnings("ignore")
 
 data_dir = ''
 
+def collate_fn_test(batch): #original
+    images, targets = zip(*batch)
+    targets = pd.DataFrame(targets).to_dict(orient="list")
+    
+    target = {}
+    
+    if "labels" not in targets:
+        for key in ("cls", "box", "idx"):
+            target[key] = torch.tensor([])
+    else:
+        for key in ("labels", "boxes"):
+            target[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
+            target[key] = torch.cat(target[key], dim=0)
+            
+        target["idx"] = torch.tensor([list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), target["labels"]))]) # or torch.cat(list) or torch.tensor([list])
+        target["cls"] = target.pop("labels")
+        target["box"] = target.pop("boxes")
+    
+    samples = torch.stack(images, dim=0)
+
+    return images, target
+
 def get_sampler_split(dataset, ratio, seed = 42, shuffle = False): #new
     import numpy as np
     dataset_size = len(dataset)
@@ -280,7 +302,8 @@ def test(args, params, model=None):
     mean_ap = 0
     metrics = []
     p_bar = tqdm.tqdm(loader, desc=('%10s' * 5) % ('', 'precision', 'recall', 'mAP50', 'mAP'))
-    for samples, targets in p_bar:
+    for batch in p_bar:
+        samples, targets = collate_fn_test(batch)
         samples = samples.cuda()
         samples = samples.half()  # uint8 to fp16/32
         samples = samples / 255.  # 0 - 255 to 0.0 - 1.0
