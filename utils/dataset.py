@@ -246,6 +246,8 @@ class Dataset(data.Dataset):
         target["cls"] = target.pop("labels")
         target["box"] = target.pop("boxes")
 
+        print(target)
+        
         # targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
         # targets["boxes"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["boxes"]))
         # targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["label"])) #if isinstance(t, float) and math.isnan(t)
