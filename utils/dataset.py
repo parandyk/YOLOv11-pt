@@ -229,7 +229,9 @@ class Dataset(data.Dataset):
     def collate_fn(batch): #original
         images, targets = zip(*batch)
         targets = pd.DataFrame(targets).to_dict(orient="list")
-
+        
+        target = {}
+        
         for key in ("labels", "boxes", "idx"):
             if key not in targets:
                 targets[key] = torch.tensor([])
@@ -239,7 +241,6 @@ class Dataset(data.Dataset):
                 else:
                     targets[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
                 target[key] = torch.cat(targets[key], dim=0)
-
         target["cls"] = target.pop("labels")
         target["box"] = target.pop("boxes")
 
