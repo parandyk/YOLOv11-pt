@@ -43,6 +43,11 @@ def collate_fn_test(batch): #original
 
     return images, target
 
+def fix_targets(targets): #original
+    target["idx"] = torch.tensor([list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), target["idx"]))])
+    return fixed_targets
+    
+
 def get_sampler_split(dataset, ratio, seed = 42, shuffle = False): #new
     import numpy as np
     dataset_size = len(dataset)
