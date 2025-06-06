@@ -304,7 +304,8 @@ def test(args, params, model=None):
     metrics = []
     p_bar = tqdm.tqdm(loader, desc=('%10s' * 5) % ('', 'precision', 'recall', 'mAP50', 'mAP'))
     for batch in p_bar:
-        samples, targets = collate_fn_test(batch)
+        #samples, targets = collate_fn_test(batch)
+        samples, targets = batch
         samples = samples.cuda()
         samples = samples.half()  # uint8 to fp16/32
         samples = samples / 255.  # 0 - 255 to 0.0 - 1.0
@@ -316,9 +317,13 @@ def test(args, params, model=None):
         outputs = util.non_max_suppression(outputs)
         # Metrics
         for i, output in enumerate(outputs):
+            print(f"to output: {output}")
             idx = targets['idx'] == i
+            print(f"to idx: {idx}")
             cls = targets['cls'][idx]
+            print(f"to cls: {cls}")
             box = targets['box'][idx]
+            print(f"to box: {box}")
 
             cls = cls.cuda()
             box = box.cuda()
