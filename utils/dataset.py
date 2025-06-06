@@ -225,39 +225,38 @@ class Dataset(data.Dataset):
     # targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
     # targets = dict(map(lambda kv: (kv[0], torch.stack(kv[1])), targets.items()))
     # targets = dict(map(lambda kv: (kv[0], torch.cat(kv[1], dim=0)), targets.items()))
+
+    #     for key in ("labels", "boxes"):
+    #     if key not in targets:
+    #         target[key] = torch.tensor([])
+    #     else:
+    #         if key == "labels":
+    #             target["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
+    #         target[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
+                
+    #         target[key] = torch.cat(target[key], dim=0)
+            
+    # target["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), target["labels"])) if      
     
     def collate_fn(batch): #original
         images, targets = zip(*batch)
         targets = pd.DataFrame(targets).to_dict(orient="list")
         
         target = {}
-        
-        for key in ("labels", "boxes"):
-            if key not in targets:
+
+        if "labels" not in targets:
+            for key in ("cls", "box", "idx"):
                 target[key] = torch.tensor([])
-            else:
+        else:
+            for key in ("labels", "boxes"):
                 target[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
-                    
                 target[key] = torch.cat(target[key], dim=0)
                 
-        target["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), target["labels"]))        
-        target["cls"] = target.pop("labels")
-        target["box"] = target.pop("boxes")
+            target["idx"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
+            target["cls"] = target.pop("labels")
+            target["box"] = target.pop("boxes")
 
         print(target)
-        
-        # targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
-        # targets["boxes"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["boxes"]))
-        # targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["label"])) #if isinstance(t, float) and math.isnan(t)
-       
-        # for key in ("labels", "boxes", "idx"):
-        # labels = torch.cat(targets["label"], dim = 0)
-        # idx = torch.cat(targets["idx"], dim = 0)
-        # boxes = torch.cat(targets["boxes"], dim = 0)
-
-        # target = {'cls': labels,
-        #           'box': boxes,
-        #           'idx': idx}
         
         images = torch.stack(images, dim=0)
         
