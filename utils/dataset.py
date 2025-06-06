@@ -239,7 +239,10 @@ class Dataset(data.Dataset):
                 else:
                     targets[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
                 target[key] = torch.cat(targets[key], dim=0)
-        
+
+        target["cls"] = target.pop("labels")
+        target["box"] = target.pop("boxes")
+
         # targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
         # targets["boxes"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["boxes"]))
         # targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["label"])) #if isinstance(t, float) and math.isnan(t)
@@ -249,9 +252,9 @@ class Dataset(data.Dataset):
         # idx = torch.cat(targets["idx"], dim = 0)
         # boxes = torch.cat(targets["boxes"], dim = 0)
 
-        target = {'cls': labels,
-                  'box': boxes,
-                  'idx': idx}
+        # target = {'cls': labels,
+        #           'box': boxes,
+        #           'idx': idx}
         
         images = torch.stack(images, dim=0)
         
