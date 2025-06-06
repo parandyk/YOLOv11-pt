@@ -203,6 +203,7 @@ def train(args, params):
                 # Forward
                 with torch.amp.autocast('cuda'):
                     outputs = model(samples)  # forward
+                    print(f'train outputs: {outputs}')
                     loss_box, loss_cls, loss_dfl = criterion(outputs, targets)
 
                 avg_box_loss.update(loss_box.item(), samples.size(0))
