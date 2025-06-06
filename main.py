@@ -305,7 +305,10 @@ def test(args, params, model=None):
     p_bar = tqdm.tqdm(loader, desc=('%10s' * 5) % ('', 'precision', 'recall', 'mAP50', 'mAP'))
     for batch in p_bar:
         #samples, targets = collate_fn_test(batch)
+
         samples, targets = batch
+        print(f"to targets: {targets}") #delete
+        print(f"to targets shape: {targets.shape}") #delete
         samples = samples.cuda()
         samples = samples.half()  # uint8 to fp16/32
         samples = samples / 255.  # 0 - 255 to 0.0 - 1.0
@@ -317,13 +320,13 @@ def test(args, params, model=None):
         outputs = util.non_max_suppression(outputs)
         # Metrics
         for i, output in enumerate(outputs):
-            print(f"to output: {output}")
+            print(f"to output: {output}")  #delete
             idx = targets['idx'] == i
-            print(f"to idx: {idx}")
+            print(f"to idx: {idx}")  #delete
             cls = targets['cls'][idx]
-            print(f"to cls: {cls}")
+            print(f"to cls: {cls}")  #delete
             box = targets['box'][idx]
-            print(f"to box: {box}")
+            print(f"to box: {box}")  #delete
 
             cls = cls.cuda()
             box = box.cuda()
