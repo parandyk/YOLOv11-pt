@@ -218,32 +218,38 @@ class Dataset(data.Dataset):
         
     #     return new_batch
     @staticmethod    
+
+    # print(f'label is type: {type(targets["labels"][0])}')
+    # print(f'boxes is type: {type(targets["boxes"][0])}')
+    # print(f'boxes is type: {type(targets["labels"][0])}')
+    # targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
+    # targets = dict(map(lambda kv: (kv[0], torch.stack(kv[1])), targets.items()))
+    # targets = dict(map(lambda kv: (kv[0], torch.cat(kv[1], dim=0)), targets.items()))
+    
     def collate_fn(batch): #original
         images, targets = zip(*batch)
         targets = pd.DataFrame(targets).to_dict(orient="list")
-        # print(f'label is type: {type(targets["labels"][0])}')
-        # print(f'boxes is type: {type(targets["boxes"][0])}')
-        # print(f'boxes is type: {type(targets["labels"][0])}')
-        # targets["label"] = list(map(lambda t: torch.tensor([]) if 
+
+        for key in ("labels", "boxes", "idx"):
+            if key not in targets:
+                targets[key] = torch.tensor([])
+        
         targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
-        #targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
         targets["boxes"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["boxes"]))
         targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["label"])) #if isinstance(t, float) and math.isnan(t)
-        print(targets["labels"])
+        
         labels = torch.cat(targets["label"], dim = 0)
         idx = torch.cat(targets["idx"], dim = 0)
         boxes = torch.cat(targets["boxes"], dim = 0)
-        # target = {'labels': labels,
-        #            'boxes': boxes,
-        #            'idx': idx}
+
         target = {'cls': labels,
                   'box': boxes,
                   'idx': idx}
         
-        #targets = dict(map(lambda kv: (kv[0], torch.stack(kv[1])), targets.items()))
-       # targets = dict(map(lambda kv: (kv[0], torch.cat(kv[1], dim=0)), targets.items()))
         images = torch.stack(images, dim=0)
+        
         return images, target
+        
     # def collate_fn(batch): #original
     #     #print(batch)
     #     # samples, cls, box, indices = zip(*batch)
