@@ -203,7 +203,7 @@ def train(args, params):
                 # Forward
                 with torch.amp.autocast('cuda'):
                     outputs = model(samples)  # forward
-                    print(f'train outputs: {outputs}')
+                    #print(f'train outputs: {outputs}')
                     loss_box, loss_cls, loss_dfl = criterion(outputs, targets)
 
                 avg_box_loss.update(loss_box.item(), samples.size(0))
@@ -317,8 +317,9 @@ def test(args, params, model=None):
     p_bar = tqdm.tqdm(loader, desc=('%10s' * 5) % ('', 'precision', 'recall', 'mAP50', 'mAP'))
     for batch in p_bar:
         #samples, targets = collate_fn_test(batch)
-
+        
         samples, targets = batch
+        samples = torch.stack(samples, dim = 0) #?
         print(f"targets at first: {targets}") #delete
         print(f"samples before cuda: {samples}") #delete
         #targets = fix_targets(targets) 
