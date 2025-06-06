@@ -252,7 +252,7 @@ class Dataset(data.Dataset):
                 target[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
                 target[key] = torch.cat(target[key], dim=0)
                 
-            target["idx"] = torch.tensor([map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), target["labels"])]) # or torch.cat
+            target["idx"] = torch.tensor([list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), target["labels"]))]) # or torch.cat(list) or torch.tensor([list])
             target["cls"] = target.pop("labels")
             target["box"] = target.pop("boxes")
 
