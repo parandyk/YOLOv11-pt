@@ -45,7 +45,8 @@ def collate_fn_test(batch): #original
 
 def fix_targets(targets): #original
     fixed_targets = targets
-    fixed_targets["idx"] = torch.tensor([list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["idx"]))])
+    fixed_targets["idx"] = torch.tensor([list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["idx"][0]))])
+    fixed_targets["box"] = torch.tensor([list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["box"][0]))])
     return fixed_targets
     
 
