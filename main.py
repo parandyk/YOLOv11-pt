@@ -319,9 +319,10 @@ def test(args, params, model=None):
         #samples, targets = collate_fn_test(batch)
         
         samples, targets = batch
+        print(f"test samples before stacking: {samples}") #delete
         samples = torch.stack(samples, dim = 0) #?
+        print(f"test samples after stacking, before cuda: {samples}") #delete
         print(f"targets at first: {targets}") #delete
-        print(f"samples before cuda: {samples}") #delete
         #targets = fix_targets(targets) 
         samples = samples.cuda()
         print(f"samples after cuda: {samples}") #delete
