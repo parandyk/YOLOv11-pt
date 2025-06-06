@@ -320,7 +320,7 @@ def test(args, params, model=None):
         samples, targets = batch
         print(f"targets at first: {targets}") #delete
         print(f"samples before cuda: {samples}") #delete
-        targets = fix_targets(targets) 
+        #targets = fix_targets(targets) 
         samples = samples.cuda()
         print(f"samples after cuda: {samples}") #delete
         samples = samples.half()  # uint8 to fp16/32
