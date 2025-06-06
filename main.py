@@ -48,7 +48,7 @@ def fix_targets(targets): #original
     
     # fixed_targets["idx"] = torch.tensor([list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["idx"][0]))])
     
-    fixed_targets["idx"] = torch.tensor([list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["idx"][0]))])
+    fixed_targets["idx"] = torch.tensor([list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["idx"][0]))]) if len(t.shape) > 0
     fixed_targets["box"] = targets["box"][0]
     return fixed_targets
     
