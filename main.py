@@ -320,7 +320,7 @@ def test(args, params, model=None):
         
         samples, targets = batch
         print(f"test samples before stacking: {samples}") #delete
-        samples = torch.stack(samples, dim = 0) #?
+        #samples = torch.stack(samples, dim = 0) #?
         print(f"test samples after stacking, before cuda: {samples}") #delete
         print(f"targets at first: {targets}") #delete
         #targets = fix_targets(targets) 
