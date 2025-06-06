@@ -233,14 +233,21 @@ class Dataset(data.Dataset):
         for key in ("labels", "boxes", "idx"):
             if key not in targets:
                 targets[key] = torch.tensor([])
+            else:
+                if key == "idx":
+                    targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
+                else:
+                    targets[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
+                target[key] = torch.cat(targets[key], dim=0)
         
-        targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
-        targets["boxes"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["boxes"]))
-        targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["label"])) #if isinstance(t, float) and math.isnan(t)
-        
-        labels = torch.cat(targets["label"], dim = 0)
-        idx = torch.cat(targets["idx"], dim = 0)
-        boxes = torch.cat(targets["boxes"], dim = 0)
+        # targets["label"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["labels"]))
+        # targets["boxes"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets["boxes"]))
+        # targets["idx"] = list(map(lambda t: torch.arange(t.size(0)) if isinstance(t, torch.Tensor) else torch.tensor([]), targets["label"])) #if isinstance(t, float) and math.isnan(t)
+       
+        # for key in ("labels", "boxes", "idx"):
+        # labels = torch.cat(targets["label"], dim = 0)
+        # idx = torch.cat(targets["idx"], dim = 0)
+        # boxes = torch.cat(targets["boxes"], dim = 0)
 
         target = {'cls': labels,
                   'box': boxes,
