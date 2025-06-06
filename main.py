@@ -313,6 +313,7 @@ def test(args, params, model=None):
         #samples, targets = collate_fn_test(batch)
 
         samples, targets = batch
+        print(f"targets at first: {targets}") #delete
         print(f"samples before cuda: {samples}") #delete
         targets = fix_targets(targets) 
         samples = samples.cuda()
