@@ -243,7 +243,7 @@ class Dataset(data.Dataset):
         targets = pd.DataFrame(targets).to_dict(orient="list")
         
         target = {}
-
+        
         if "labels" not in targets:
             for key in ("cls", "box", "idx"):
                 target[key] = torch.tensor([])
@@ -252,7 +252,7 @@ class Dataset(data.Dataset):
                 target[key] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), targets[key]))
                 target[key] = torch.cat(target[key], dim=0)
                 
-            target["idx"] = list(map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), target["labels"]))
+            target["idx"] = torch.tensor([map(lambda t: t if isinstance(t, torch.Tensor) else torch.tensor([]), target["labels"])]) # or torch.cat
             target["cls"] = target.pop("labels")
             target["box"] = target.pop("boxes")
 
