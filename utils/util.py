@@ -423,7 +423,7 @@ class LinearLR:
         min_lr = params['min_lr']
 
         warmup_steps = int(max(params['warmup_epochs'] * num_steps, 100))
-        decay_steps = int(args.epochs * num_steps - warmup_steps)
+        decay_steps = int(max(args.epochs * num_steps - warmup_steps), 0)
 
         warmup_lr = numpy.linspace(min_lr, max_lr, int(warmup_steps), endpoint=False)
         decay_lr = numpy.linspace(max_lr, min_lr, decay_steps)
