@@ -361,6 +361,7 @@ def test(args, params, model=None):
             metrics.append((metric, output[:, 4], output[:, 5], cls.squeeze(-1)))
 
     # Compute metrics
+    print(f'metrics tut: {metrics}')
     metrics = [torch.cat(x, dim=0).cpu().numpy() for x in zip(*metrics)]  # to numpy
     if len(metrics) and metrics[0].any():
         tp, fp, m_pre, m_rec, map50, mean_ap = util.compute_ap(*metrics, plot=plot, names=params["names"])
